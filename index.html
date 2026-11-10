@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>퇴직연금 DB·DC·IRP</title>
+<meta name="description" content="퇴직금이 DB·DC·IRP 중 어디서 굴러가는지, DB와 DC를 임금상승률과 수익률로 비교하고 대기 현금 확인부터 TDF·ETF까지 점검하는 배당노마드 설명서.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf7ee; --card:#ffffff; --ink:#26302b; --muted:#5f6b64; --line:#e4dccb;
+  --mint:#7fb89a; --mint-soft:#e5f2ea; --ochre:#c98a2b; --ochre-soft:#f7ead3;
+  --warn:#b4492f; --warn-soft:#f8e3dc; --chip:#efe8d8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#171b19; --card:#20262299; --ink:#e8ece9; --muted:#a7b1ab; --line:#36403a;
+    --mint:#8fcaa9; --mint-soft:#22362b; --ochre:#e0a447; --ochre-soft:#3a2f1c;
+    --warn:#ef8a70; --warn-soft:#3d241d; --chip:#2b322e;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171b19; --card:#20262299; --ink:#e8ece9; --muted:#a7b1ab; --line:#36403a;
+  --mint:#8fcaa9; --mint-soft:#22362b; --ochre:#e0a447; --ochre-soft:#3a2f1c;
+  --warn:#ef8a70; --warn-soft:#3d241d; --chip:#2b322e;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;line-height:1.75;font-size:17px;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 80px}
+header.hero{padding:48px 0 24px;display:grid;grid-template-columns:1fr 240px;gap:24px;align-items:center}
+.hero h1{font-size:clamp(28px,5vw,42px);line-height:1.25;margin:8px 0 14px;font-weight:900;letter-spacing:-.02em}
+.kicker{display:inline-block;background:var(--mint-soft);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:14px;font-weight:700}
+.hero p.lead{font-size:18px;color:var(--muted);margin:0}
+.hero img{width:100%;height:auto;border-radius:18px;background:#fbf4e6}
+nav.toc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin:8px 0 28px;font-size:15px}
+nav.toc ol{margin:6px 0 0;padding-left:20px;columns:2;column-gap:28px}
+nav.toc a{color:var(--ink)}
+section{margin:44px 0}
+h2{font-size:26px;line-height:1.35;margin:0 0 14px;font-weight:900;letter-spacing:-.01em}
+h2 .n{color:var(--ochre);margin-right:6px}
+h3{font-size:19px;margin:24px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.answer{background:var(--mint-soft);border:2px solid var(--mint);border-radius:18px;padding:20px 22px}
+.answer ol{margin:8px 0 0;padding-left:22px}
+.answer li{margin:6px 0}
+.note{font-size:14.5px;color:var(--muted)}
+.warn{background:var(--warn-soft);border-left:5px solid var(--warn);border-radius:10px;padding:12px 16px;margin:16px 0}
+.tip{background:var(--ochre-soft);border-left:5px solid var(--ochre);border-radius:10px;padding:12px 16px;margin:16px 0}
+.tablebox{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--chip);font-weight:700;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.win{font-weight:700;color:var(--ink);background:var(--mint-soft)}
+figure{margin:20px 0}
+figure img{width:100%;height:auto;border-radius:16px;display:block;background:#fbf4e6}
+figcaption{font-size:14px;color:var(--muted);margin-top:6px;text-align:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pill{display:inline-block;background:var(--chip);border-radius:999px;padding:1px 10px;font-size:13.5px;margin-right:4px}
+.vintage{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
+.vintage input{font:inherit;width:120px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.vintage output{font-weight:700}
+svg text{font-family:"Noto Sans KR",sans-serif}
+.flow{counter-reset:step;list-style:none;padding:0;margin:0}
+.flow li{position:relative;padding:14px 16px 14px 58px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin:10px 0}
+.flow li::before{counter-increment:step;content:counter(step);position:absolute;left:16px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--ochre);color:#fff;font-weight:900;display:grid;place-items:center}
+.check{list-style:none;padding:0}
+.check li{padding:8px 0 8px 30px;position:relative;border-bottom:1px dashed var(--line)}
+.check li::before{content:"□";position:absolute;left:4px;color:var(--ochre);font-weight:900}
+.src li{font-size:14.5px;margin:4px 0}
+.src a{color:var(--ink)}
+footer{border-top:1px solid var(--line);margin-top:56px;padding-top:20px;font-size:14px;color:var(--muted)}
+.themebtn{position:fixed;right:12px;bottom:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+@media (max-width:680px){
+  header.hero{grid-template-columns:1fr;padding-top:28px}
+  .hero img{max-width:220px;margin:0 auto}
+  nav.toc ol{columns:1}
+  .grid2{grid-template-columns:1fr}
+  body{font-size:16px}
+  h2{font-size:22px}
+}
+</style>
+
+<style>
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.trio .card h3{margin:0 0 6px;font-size:18px}
+.trio .card p{margin:4px 0;font-size:15px}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:0 9px;background:var(--ochre-soft);color:var(--ink);border:1px solid var(--line)}
+.quiz fieldset{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.quiz legend{font-weight:700;padding:0 6px}
+.quiz label{display:inline-flex;gap:6px;align-items:center;margin:4px 14px 4px 0;cursor:pointer}
+#verdict{margin-top:12px}
+.mine{background:var(--card);border:2px dashed var(--ochre);border-radius:18px;padding:18px 20px}
+.mine h3:first-child{margin-top:0}
+@media (max-width:680px){.trio{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <span class="kicker">배당노마드 · 연금 설명서</span>
+    <h1>퇴직금은 DB·DC·IRP 중<br>어디서 굴러가고 있을까</h1>
+    <p class="lead">퇴직급여는 내가 따로 넣지 않아도 회사가 쌓아 주는 돈이라, 오히려 가장 덜 들여다보는 계좌가 되기 쉽습니다. 2025년 말 퇴직연금 적립금 501조 원 가운데 75%가 원리금보장형(대기 현금 포함)에 있었습니다. 내 돈이 지금 어떤 칸에서 무엇을 하고 있는지부터 봅니다.</p>
+  </div>
+  <img src="images/261024-trino-traveler.webp" alt="버킷햇과 배낭을 멘 민트색 트리케라톱스 트리노가 여행을 떠나는 모습" width="480" height="320">
+</header>
+
+<nav class="toc" aria-label="목차">
+  <strong>목차</strong>
+  <ol>
+    <li><a href="#answer">먼저 결론</a></li>
+    <li><a href="#why">퇴직금은 왜 밖으로 나갔나</a></li>
+    <li><a href="#trio">DB·DC·IRP 한 장 비교</a></li>
+    <li><a href="#dbdc">DB냐 DC냐, 숫자로 보기</a></li>
+    <li><a href="#switch">DC 전환은 편도 티켓</a></li>
+    <li><a href="#receive">받을 때: 일시금 vs 연금</a></li>
+    <li><a href="#steps">굴리는 3단계</a></li>
+    <li><a href="#mine">배당노마드의 내 방식</a></li>
+    <li><a href="#check">오늘 할 점검표</a></li>
+    <li><a href="#src">근거와 기준일</a></li>
+  </ol>
+</nav>
+
+<section id="answer">
+  <h2><span class="n">01</span>먼저 결론</h2>
+  <div class="answer">
+    <strong>퇴직연금은 "어느 유형이냐"보다 "지금 그 돈이 놀고 있느냐"가 먼저입니다.</strong>
+    <ol>
+      <li><b>DB형</b>은 받을 돈이 퇴직 직전 평균임금(30일분) × 근속연수 이상으로 정해집니다. 내가 굴릴 일이 없고, 월급이 꾸준히 오를 사람에게 유리합니다.</li>
+      <li><b>DC형</b>은 회사가 매년 한 달 치 이상 임금을 내 계좌에 넣어 주고, 굴리는 건 내 몫입니다. 내 운용수익률이 임금상승률보다 높을 때 유리합니다.</li>
+      <li><b>IRP</b>는 이직·퇴직 때 받은 퇴직금을 세금을 미룬 채 모아 두는 저금통이자, 연금저축과 합쳐 연 900만 원까지 세액공제를 받는 계좌입니다.</li>
+      <li>DC·IRP라면 <b>오늘 앱을 열어 대기 현금으로 방치된 돈이 있는지</b>부터 확인합니다. 그다음이 TDF, 그다음이 ETF 자산배분입니다.</li>
+    </ol>
+  </div>
+  <p>이 설명서는 트리노의 여행으로 비유합니다. <b>DB는 패키지 여행</b>(일정과 경비를 여행사가 책임), <b>DC는 자유 여행</b>(경비는 받았고 길은 내가 고름), <b>IRP는 여행 가방 보관함</b>(갈아타는 역마다 짐을 한 곳에 모아 두는 곳)입니다. 제가 실제로 DC 계좌를 굴리는 방식은 <a href="#mine">08장</a>에 따로 적었습니다.</p>
+</section>
+
+<section id="why">
+  <h2><span class="n">02</span>퇴직금은 왜 회사 밖으로 나갔나</h2>
+  <p>예전 법정 퇴직금은 회사 장부 안에 있는 돈이었습니다. 한 회사에 오래 다니다 마지막 월급을 기준으로 한 번에 받는 구조라, 회사가 어려워지면 실제로 손에 쥐기까지 오래 걸리는 돈이 되기 쉬웠습니다. 정부 발표로는 2025년 임금체불액의 41.1%(8,229억 원)가 퇴직금이었습니다.</p>
+  <p>퇴직연금은 이 돈을 <b>은행·증권사·보험사 같은 외부 금융회사</b>에 적립하게 한 제도입니다. DC와 IRP는 내 이름의 계좌에 쌓인 돈이 그대로 내 몫입니다. DB는 밖에 적립된 만큼 보호받고, 회사가 기준보다 덜 쌓아 둔 부분은 회사가 따로 갚아야 할 몫으로 남습니다.</p>
+  <p>정부는 2026년 10월 29일 「퇴직연금 기능강화 방안」에서, 법 개정안이 연내 국회를 통과하면 <b>2028년 100인 이상, 2029년 10~99인, 2030년 10인 미만</b> 사업장까지 사외적립을 의무화하겠다고 밝혔습니다. IRP 위험자산 한도 70%를 단계적으로 완화하는 계획도 함께 들어 있습니다. 2026-11-10 기준으로는 법 개정 추진 단계입니다.</p>
+  <div class="tip"><b>사람말 번역</b> · 퇴직금 = 회사 금고에 넣어 둔 내 여행 경비. 퇴직연금 = 그 경비를 은행 금고에 옮겨 둔 것. DB는 은행 금고에 실제로 옮겨 둔 만큼만 안전하다는 점이 다릅니다.</div>
+</section>
+
+<section id="trio">
+  <h2><span class="n">03</span>DB·DC·IRP 한 장 비교</h2>
+  <div class="trio">
+    <div class="card"><span class="tag">패키지 여행</span><h3>DB 확정급여형</h3><p><b>받을 돈</b>: 계속근로 1년당 30일분 평균임금 이상 (퇴직 직전 3개월 기준)</p><p><b>굴리는 사람</b>: 회사</p><p><b>유리한 사람</b>: 승진·호봉 상승이 많이 남은 사람</p></div>
+    <div class="card"><span class="tag">자유 여행</span><h3>DC 확정기여형</h3><p><b>쌓이는 돈</b>: 매년 연간 임금총액의 1/12 이상을 회사가 입금</p><p><b>굴리는 사람</b>: 나 (수익·손실 모두 내 몫)</p><p><b>유리한 사람</b>: 꾸준히 굴릴 자신이 있는 사람, 임금 정체 구간</p></div>
+    <div class="card"><span class="tag">가방 보관함</span><h3>IRP 개인형퇴직연금</h3><p><b>역할 1</b>: 이직·퇴직 때 퇴직금을 과세 이연 상태로 보관</p><p><b>역할 2</b>: 연금저축과 합산 연 900만 원 세액공제</p><p><b>유리한 사람</b>: 이직이 잦은 사람, 세액공제가 필요한 사람</p></div>
+  </div>
+  <figure>
+    <img src="images/261031-trino-two-backpacks.webp" alt="트리노가 왼쪽과 오른쪽에 놓인 두 배낭을 번갈아 보며 고민하는 장면" width="1536" height="1024" loading="lazy">
+    <figcaption>패키지(DB)와 자유 여행(DC) 중 무엇이 나은지는 가방이 아니라 내 여행 스타일이 정합니다.</figcaption>
+  </figure>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>질문</th><th>DB</th><th>DC</th><th>IRP</th></tr></thead>
+      <tbody>
+        <tr><td>운용 결과가 내 퇴직급여를 바꾸나</td><td>아니요</td><td>예</td><td>예</td></tr>
+        <tr><td>위험자산 한도</td><td>회사 몫</td><td>적립금의 70%</td><td>적립금의 70%</td></tr>
+        <tr><td>적격 TDF·요건 갖춘 채권혼합형</td><td>—</td><td>안전자산 칸에 담을 수 있음</td><td>안전자산 칸에 담을 수 있음</td></tr>
+        <tr><td>내가 추가로 넣을 수 있나</td><td>아니요</td><td>규약에 따라 가능</td><td>예 (세액공제 대상)</td></tr>
+        <tr><td>계좌 관리 수수료</td><td>회사</td><td>보통 회사</td><td>본인 (금융사별)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">수수료는 회사가 내더라도 펀드·ETF 자체의 운용보수는 어느 계좌든 내 수익률에서 빠집니다.</p>
+</section>
+
+<section id="dbdc">
+  <h2><span class="n">04</span>DB냐 DC냐, 숫자로 보기</h2>
+  <p>판단 기준은 하나로 줄어듭니다. <b>내 임금상승률과 내 운용수익률 중 무엇이 더 높을까.</b> DB는 마지막 월급에 근속연수를 곱하니 월급이 오를수록 커지고, DC는 매년 들어온 돈이 복리로 굴러가니 수익률이 높을수록 커집니다.</p>
+  <p>아래 표는 가상 계산입니다. 20년 근속, 첫해 월급을 1로 두고, DC는 매년 말 그해 한 달 치 월급이 들어온다고 가정했습니다. 세금·보수·중간 이직은 넣지 않았습니다.</p>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>DB 대비 DC 금액 (20년)</th><th class="num">운용수익률 2%</th><th class="num">운용수익률 4%</th><th class="num">운용수익률 6%</th></tr></thead>
+      <tbody>
+        <tr><td>임금상승률 2%</td><td class="num">100%</td><td class="num win">121%</td><td class="num win">148%</td></tr>
+        <tr><td>임금상승률 4%</td><td class="num">84%</td><td class="num">100%</td><td class="num win">121%</td></tr>
+        <tr><td>임금상승률 6%</td><td class="num">71%</td><td class="num">84%</td><td class="num">100%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>대각선이 전부 100%입니다. 임금상승률과 수익률이 같으면 두 제도의 결과가 같아집니다. 예를 들어 첫해 월급 400만 원, 임금상승률 4%라면 DB는 약 1억 6,855만 원입니다. 같은 조건에서 DC를 연 2%로 굴리면 약 1억 4,104만 원으로 2,700만 원 넘게 덜 받고, 연 6%로 굴리면 약 2억 320만 원으로 3,400만 원 넘게 더 받습니다.</p>
+  <div class="warn"><b>여기서 함정</b> · "연 6%"는 계좌가 실제로 6%를 냈을 때의 이야기입니다. DC 계좌를 대기 현금이나 예금에 그대로 두면 수익률은 임금상승률을 이기기 어렵습니다. 이 경우 DC를 고른 이유가 사라집니다.</div>
+
+  <h3>3문항으로 내 쪽 가늠하기</h3>
+  <div class="card quiz" id="quiz">
+    <fieldset><legend>1. 앞으로 승진·호봉으로 월급이 크게 오를 구간이 남았나요?</legend>
+      <label><input type="radio" name="q1" value="up"> 많이 남았다</label>
+      <label><input type="radio" name="q1" value="flat"> 거의 정점이다 (임금피크 근처)</label></fieldset>
+    <fieldset><legend>2. 퇴직연금 계좌를 1년에 1~2번은 열어 비중을 맞출 수 있나요?</legend>
+      <label><input type="radio" name="q2" value="yes"> 할 수 있다</label>
+      <label><input type="radio" name="q2" value="no"> 솔직히 안 볼 것 같다</label></fieldset>
+    <fieldset><legend>3. 시장이 20% 빠졌을 때 팔지 않고 버틸 수 있나요?</legend>
+      <label><input type="radio" name="q3" value="yes"> 버틴다</label>
+      <label><input type="radio" name="q3" value="no"> 팔 것 같다</label></fieldset>
+    <div id="verdict" class="note" aria-live="polite">세 문항에 답하면 방향이 나옵니다.</div>
+  </div>
+  <p class="note">이 결과는 방향을 잡는 참고입니다. 실제 선택은 회사 규약(DB·DC 선택 가능 여부, 혼합형 여부)과 남은 근속연수를 함께 봐야 합니다.</p>
+</section>
+
+<section id="switch">
+  <h2><span class="n">05</span>DC 전환은 편도 티켓</h2>
+  <p>개인이 제도를 고를 수 있게 해 둔 회사라도 보통 DB에서 DC로 가는 길만 열어 두고, <b>DC에서 DB로 돌아오는 길은 막아 두는 경우가 많습니다.</b> 패키지 여행에서 자유 여행으로 바꾸는 건 되는데, 자유 여행 도중에 다시 패키지로 합류할 수는 없는 셈입니다. 개인 선택권이 아예 없는 회사도 있으니 전환 가능 여부는 회사 규약과 인사팀에서 먼저 확인합니다.</p>
+  <p>그래서 전환 시점이 중요합니다. 정석은 <b>월급이 정점에 있을 때, 예컨대 임금피크제가 시작되기 직전</b>입니다. DB는 퇴직 직전 평균임금으로 계산되기 때문에 월급이 깎이기 시작하면 받을 돈도 같이 줄어듭니다. 정점에서 DC로 옮기면 보통 그때까지 쌓인 DB 금액을 확정해 DC 계좌로 넘기고, 이후는 내가 굴립니다. 과거 근속분 처리 방식도 규약마다 다르니 함께 확인합니다.</p>
+  <p>반대로 피해야 할 전환도 있습니다. 주변에서 수익률 자랑이 쏟아지는 과열장에 "나도 굴려 보자"며 옮기는 경우입니다. 되돌릴 수 없는 결정은 단기 시장 분위기가 아니라 <b>앞으로 10~20년 동안 어떻게 나눠 담고 언제 점검할지 계획이 섰을 때</b> 합니다.</p>
+</section>
+
+<section id="receive">
+  <h2><span class="n">06</span>받을 때: 일시금 vs 연금</h2>
+  <p>퇴직급여를 IRP로 옮겨 만 55세 이후 연금으로 나눠 받으면, 일시금으로 찾을 때 내야 할 <b>퇴직소득세를 깎아 줍니다.</b> 소득세법 제129조에 따라 연금 수령 10년 차까지 받는 돈은 원래 퇴직소득세의 70%만, 11~20년 차에 받는 돈은 60%만 냅니다. 2026년 1월 시행된 개정법으로 <b>21년 차부터는 50%</b>까지 내려갔습니다.</p>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>가상 예시: 일시금이면 퇴직소득세 1,000만 원</th><th class="num">내는 세금</th><th class="num">아끼는 세금</th></tr></thead>
+      <tbody>
+        <tr><td>한 번에 일시금으로 수령</td><td class="num">1,000만 원</td><td class="num">0</td></tr>
+        <tr><td>연금으로, 10년 차 안에 다 받음</td><td class="num">700만 원</td><td class="num win">300만 원</td></tr>
+        <tr><td>연금으로, 11~20년 차에 받는 몫</td><td class="num">그 몫의 60%</td><td class="num win">그 몫의 40%</td></tr>
+        <tr><td>연금으로, 21년 차 이후에 받는 몫</td><td class="num">그 몫의 50%</td><td class="num win">그 몫의 50%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">연도별 연금수령 한도를 넘겨 꺼낸 몫은 감면 없이 과세되고, 퇴직금을 굴려 불어난 수익은 퇴직소득세가 아니라 연금소득세(3.3~5.5%) 대상입니다. 실제 세금은 퇴직소득 금액·근속연수에 따라 달라지니 수령 전에 금융사 예상세액을 확인하세요.</p>
+  <p>여행으로 치면 경비 봉투를 공항에서 한 번에 다 뜯지 않고 하루치씩 꺼내 쓰면 출국장에서 떼는 세금이 줄어드는 구조입니다. 그사이 봉투 안 돈은 계속 굴러갑니다. 정부는 10월 29일 방안에서 일시금을 원한다고 밝히지 않으면 연금으로 자동 지급하는 방향도 내놨습니다.</p>
+</section>
+
+<section id="steps">
+  <h2><span class="n">07</span>굴리는 3단계</h2>
+  <p>고용노동부·금융감독원이 2026년 5월 20일 발표한 퇴직연금 투자 백서 보도에 따르면 2025년 말 적립금은 501조 4천억 원, 그중 원리금보장형이 75.4%입니다. 이 비중에는 운용 지시를 기다리는 대기 현금도 들어 있습니다. 같은 해 전체 수익률은 6.47%였지만, 내 계좌가 그 평균에 있었는지는 열어 봐야 압니다.</p>
+  <figure>
+    <img src="images/261103-trino-tdf-leaky-bucket.webp" alt="두 칸 만화. 왼쪽은 구멍이 여러 개 난 양동이를 든 트리노 뒤로 물웅덩이가 이어지고, 오른쪽은 구멍이 하나뿐인 양동이를 든 트리노가 거의 가득 찬 물을 그대로 들고 간다" width="1536" height="1024" loading="lazy">
+    <figcaption>대기 현금과 높은 보수는 양동이의 구멍입니다. 20~30년을 들고 가면 물이 눈에 띄게 줄어듭니다.</figcaption>
+  </figure>
+  <ol class="flow">
+    <li><b>방치 확인</b> · 금융사 앱에서 DC·IRP 계좌의 "운용 상품"을 봅니다. 상품명 없이 현금·대기자금으로만 남은 돈이 있으면 최소한 정기예금이나 디폴트옵션이라도 지정합니다. 디폴트옵션은 내가 운용 지시를 하지 않으면 미리 골라 둔 상품으로 자동 운용되는 장치입니다.</li>
+    <li><b>TDF로 한 번에</b> · 직접 고르기 어렵다면 은퇴 연도에 맞춘 TDF가 주식·채권 비중을 알아서 줄여 갑니다. 이름에 "적격"이 붙은 TDF는 DC·IRP에서 100%까지 담을 수 있습니다.</li>
+    <li><b>ETF 자산배분</b> · 직접 나눠 담는다면 위험자산 70%, 안전자산 30% 틀 안에서 글로벌 주식과 채권·채권혼합형으로 분산합니다. 채권혼합형은 주식 비중 40% 이하 같은 요건을 갖춘 상품만 안전자산으로 인정되니 금융사 앱의 위험·안전 구분 표시를 확인합니다. 저보수 상품을 고르고, 1년에 한두 번 비중을 맞춥니다.</li>
+  </ol>
+  <p>제 DC는 3단계로 굴리지만, 이 순서가 꼭 3단계까지 가야 한다는 뜻은 아닙니다. 1년에 한 번도 열어 보지 않을 계좌라면 2단계에서 멈추는 쪽이 3단계를 시작했다가 방치하는 것보다 낫습니다.</p>
+  <figure>
+    <img src="images/261103-trino-tdf-irp-gate.webp" alt="트리노가 수레를 밀며 나무 검문소에 도착한다. 수레의 큰 칸에는 바위가 선까지 차 있고, 따로 칸에 든 체크 표시 초록 꾸러미는 열린 옆 통로로 지나간다" width="1536" height="1024" loading="lazy">
+    <figcaption>위험자산 칸은 70%까지. 적격 TDF와 요건을 갖춘 채권혼합형은 옆 통로(안전자산 칸)로 지나갑니다.</figcaption>
+  </figure>
+</section>
+
+<section id="mine">
+  <h2><span class="n">08</span>배당노마드의 내 방식</h2>
+  <div class="mine">
+    <p>저는 40대 회사원이고, 회사 퇴직연금은 <b>DC형</b>입니다. 이 설명서를 쓰면서 제 계좌 규칙을 다시 꺼내 봤습니다. 금액은 빼고 규칙만 적습니다.</p>
+    <h3>① 위험자산 70%는 꽉 채우고, 안전자산 칸은 채권혼합형으로</h3>
+    <p>저는 은퇴까지 시간이 남았고, 이 돈은 생활비로 꺼낼 일이 없는 돈입니다. 그래서 DC는 위험자산 한도 70%를 거의 다 씁니다. 안전자산 칸을 채울 때는 예금보다 <b>주식이 일부 섞인 채권혼합형 ETF</b>를 고릅니다. 안전자산으로 분류되면서도 완전한 현금보다는 굴러가기 때문입니다. 최근 점검 때 위험자산이 70.3%로 한도에 닿아서, 그 뒤 DC에 들어오는 돈은 채권혼합형만 사기로 했습니다.</p>
+    <h3>② 퇴직연금 하나만 보지 않고 연금 묶음으로 본다</h3>
+    <p>연금저축과 퇴직연금을 하나의 묶음으로 보고 목표를 정했습니다. 지금은 <b>나스닥100 60 · S&amp;P500 18 · 채권혼합 18 · 테마 4</b>입니다. 연금저축은 위험자산 한도가 없으니 공격적인 몫을 그쪽에 두고, DC는 한도 안에서 맞춥니다. 계좌마다 규칙이 다르니 계좌 하나로 완벽한 비율을 만들려고 하면 꼭 한 칸이 막힙니다.</p>
+    <h3>③ 팔지 않고, 새로 들어오는 돈으로만 맞춘다</h3>
+    <p>목표에서 ±5%포인트 넘게 벌어지면 맞추되, 파는 대신 새로 들어오는 적립금으로 모자란 칸을 채웁니다. 연금 계좌는 매매에 세금이 붙지 않지만, 자꾸 팔고 사면 시장 타이밍을 맞히는 게임이 되기 때문입니다. 이 묶음은 괜히 자주 흔들지 않는 게 제 원칙입니다.</p>
+    <h3>④ 앱 숫자는 한 번 의심한다</h3>
+    <p>앱에 찍힌 위험자산 비율이 법에서 말하는 70% 계산과 같은 정의인지 저도 아직 확인 중입니다. 채권혼합형을 어떻게 분류했는지, 대기 현금이 분모에 들어갔는지에 따라 몇 %포인트가 달라질 수 있습니다. 한도 근처에서 매수가 막히면 금융사 고객센터에 정의를 물어보는 게 빠릅니다.</p>
+    <h3>⑤ "남 얘기"인 줄 알았던 가족 계좌</h3>
+    <p>가족 금융 시트를 정리하다 보니 가족 IRP 하나가 ETF 없이 위험자산 0%였습니다. 예금류나 디폴트옵션 상품에 들어 있을 수 있어서 엄밀히 1단계 방치는 아닐 수 있지만, 수십 년 굴릴 돈이 원리금보장에만 있다면 2·3단계로 넘어갈지 따져 봐야 하는 계좌입니다. 바로 바꾸지 않고 <b>중도해지 이율부터 확인</b>하는 중입니다. 예금을 깨면 이자가 줄어들 수 있어서, 만기에 맞춰 옮길지 지금 옮길지 숫자로 보고 정할 생각입니다.</p>
+    <h3>⑥ 월배당 ETF는 DC 적립기의 주인공이 아니다</h3>
+    <p>저는 배당을 좋아하는 블로거지만, DC 적립기에는 월배당·커버드콜 ETF를 메인으로 두지 않습니다. 연금 계좌 안에서는 분배금이 생활비로 나오지 않고, 커버드콜은 상승장에서 오름폭을 내주기 때문입니다. 월배당은 인출이 가까워진 뒤 보조 엔진으로 검토합니다.</p>
+  </div>
+  <figure>
+    <img src="images/261103-trino-tdf-habit.webp" alt="두 칸 만화. 왼쪽은 트리노가 땀을 흘리며 들쭉날쭉한 차트가 뜬 휴대폰의 빨간 버튼에 손가락을 대고 있고, 오른쪽은 나무 아래에서 모자를 눌러쓰고 쉬는 동안 자동 컨베이어가 동전을 유리병에 하나씩 떨어뜨린다" width="1536" height="1024" loading="lazy">
+    <figcaption>규칙을 정해 두면 빨간 버튼 앞에서 땀 흘릴 일이 줄어듭니다.</figcaption>
+  </figure>
+  <p class="note">위 비율은 제 상황(나이·근속·다른 자산)에 맞춘 개인 기록이며 추천 비율이 아닙니다.</p>
+</section>
+
+<section id="check">
+  <h2><span class="n">09</span>오늘 할 점검표</h2>
+  <ul class="check">
+    <li>회사 퇴직연금이 DB인지 DC인지, 둘을 섞은 혼합형인지 인사팀이나 금융사 앱에서 확인했다</li>
+    <li>DC·IRP 계좌에 상품 지정 없이 대기 현금으로 남은 돈이 없다</li>
+    <li>위험자산 비중이 70% 한도 대비 몇 %인지 알고 있다</li>
+    <li>앱에 표시된 위험자산 비율이 채권혼합형·대기 현금을 어떻게 셌는지 확인했다</li>
+    <li>예금형 상품이 있다면 만기와 중도해지 이율을 확인했다</li>
+    <li>담은 펀드·ETF의 총보수를 알고 있다 (계좌 수수료와 별개)</li>
+    <li>금융감독원 <b>통합연금포털</b>에서 국민연금·퇴직연금·개인연금을 한 번에 조회했다</li>
+    <li><b>어카운트인포</b>에서 예전 직장의 미청구 퇴직연금이 없는지 확인했다</li>
+    <li>DB→DC 전환을 고민 중이라면, 임금피크 시작 시점과 회사 규약의 전환 조건을 적어 두었다</li>
+    <li>퇴직하면 일시금 대신 IRP로 받아 연금으로 나눠 받을 계획이 있다</li>
+  </ul>
+</section>
+
+<section id="src">
+  <h2><span class="n">10</span>근거와 기준일</h2>
+  <ul class="src">
+    <li>고용노동부·금융감독원, 「2025년 우리나라 퇴직연금 투자 백서」(2026-05-20 발표, <a href="https://www.newsis.com/view/NISX20260520_0003637115">보도 기준</a>): 2025년 말 적립금 501.4조 원, 원리금보장형 75.4%(대기성자금 포함), 연간 수익률 6.47%. 백서 원문은 열람하지 못했습니다.</li>
+    <li>관계부처 합동, <a href="https://www.korea.kr/news/policyNewsView.do?newsId=148974546">「퇴직연금 기능강화 방안」</a>(2026-10-29): 사외적립 단계적 의무화 일정, 2025년 체불액 중 퇴직금 41.1%, IRP 위험자산 한도 단계적 완화, 연금 자동 지급 추진.</li>
+    <li>근로자퇴직급여 보장법: DB 급여 수준(계속근로 1년당 30일분 평균임금 이상), DC 부담금(연간 임금총액의 1/12 이상), DC·IRP 위험자산 한도 70%와 적격 TDF·채권혼합형 안전자산 요건(시행령·퇴직연금감독규정).</li>
+    <li><a href="https://www.law.go.kr/법령/소득세법/제129조">소득세법 제129조 제1항 제5호의3</a>(2026-01-01 시행, 2026-11-10 원문 확인): 퇴직소득을 연금수령하면 연금외수령 세율의 70%(10년 이하)·60%(10년 초과 20년 이하)·50%(20년 초과).</li>
+    <li>연금계좌 세액공제: 연금저축 600만 원, IRP 합산 900만 원 한도, 총급여 5,500만 원 이하 16.5%·초과 13.2%(지방소득세 포함). 2026년 귀속 기준.</li>
+      </ul>
+  <p class="note">DB↔DC 전환 가능 여부와 과거 근속분 처리는 회사 퇴직연금 규약에 따릅니다. 04장 표와 06장 표는 가정치로 계산한 예시입니다.</p>
+</section>
+
+<footer>
+  <p><b>투자 권유가 아닙니다.</b> 이 글은 퇴직연금 제도를 이해하고 내 계좌를 점검하기 위한 자료이며, 특정 상품의 매수나 매도, DB·DC 전환을 권하지 않습니다. 세금과 한도는 2026-11-10 기준 공개 자료로 정리했으므로 실행 전에 금융사와 회사 규약에서 다시 확인하세요.</p>
+  <p>글 구성과 계산은 AI(Claude)의 도움을 받아 작성했고, 세법 조문은 2026-11-10 국가법령정보센터 원문과 대조했습니다. 트리노 삽화는 AI로 생성한 그림입니다. 글과 삽화는 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ko">CC BY-NC-ND 4.0</a>을 따르며, 인용한 제3자 자료의 권리는 각 권리자에게 있습니다. 2026-11-10 작성.</p>
+</footer>
+</div>
+<button class="themebtn" type="button" id="theme">밝게/어둡게</button>
+<script>
+(function(){
+  var quiz=document.getElementById('quiz'), out=document.getElementById('verdict');
+  function val(n){var e=quiz.querySelector('input[name="'+n+'"]:checked');return e?e.value:null;}
+  function upd(){
+    var a=val('q1'),b=val('q2'),c=val('q3');
+    if(!a||!b||!c){out.textContent='세 문항에 답하면 방향이 나옵니다.';return;}
+    var t;
+    if(b==='no'||c==='no'){
+      t= a==='up' ? '지금은 DB 쪽이 마음 편한 선택입니다. 월급이 오를 구간이 남았고, 굴리는 습관이 아직 없으면 DC의 장점을 살리기 어렵습니다.'
+                 : '전환을 서두를 이유는 적어 보입니다. 월급은 정점이지만 계좌를 볼 습관이나 버틸 자신이 없으면, DC로 옮긴 뒤 대기 현금에 묶일 수 있습니다. 이미 DC라면 최소한 디폴트옵션이나 TDF가 지정돼 있는지 확인해 볼 만합니다.';
+    } else {
+      t= a==='flat' ? 'DC 쪽을 검토할 만한 조건입니다. 전환을 검토한다면 임금피크 직전처럼 월급이 정점인 시기가 기준이 되고, 70/30 틀과 점검일을 먼저 정해 두는 편이 안전합니다. 대개 되돌릴 수 없다는 점도 함께 따져 보세요.'
+                    : '양쪽 다 가능합니다. 월급이 많이 오를 구간이 남았다면 DB를 유지하다가 정점 근처에서 DC 전환을 다시 계산해 보는 순서가 안전합니다. 이미 DC라면 지금처럼 꾸준히 굴리면 됩니다.';
+    }
+    out.innerHTML='<div class="tip" style="margin:0">'+t+'</div>';
+  }
+  quiz.addEventListener('change',upd);
+  var root=document.documentElement, btn=document.getElementById('theme');
+  try{var s=localStorage.getItem('theme'); if(s) root.setAttribute('data-theme',s);}catch(e){}
+  btn.addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    var nx=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',nx);
+    try{localStorage.setItem('theme',nx);}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
